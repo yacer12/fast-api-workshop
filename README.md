@@ -3,13 +3,17 @@
 ## Workshop Overview
 This workshop will guide you through the creation of a RESTful API using FastAPI, with Docker integration and MongoDB. We will cover the following topics:
 
-- Creating a CRUD API
-- Implementing search capabilities
-- Securing your API
+- Creating a CRUD API with MongoDB
+- Implementing search capabilities on the API
 - Data validation using Pydantic
 - Generating OpenAPI documentation
-- Writing unit tests
-- Implementing CORS
+- Securing your API
+- Best Practices:
+  - Rate Limit
+  - More Security
+  - API Throttling
+- Running unit tests
+- Deployment?
 
 ## Prerequisites
 - Basic knowledge of Python
