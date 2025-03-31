@@ -22,9 +22,10 @@ def generate_sample_expense(num_of_expenses=150):
             "amount": round(random.uniform(5.0, 2500.0), 2),
             "category": random.choice(categories),
             "description": random.choice(
-                [None, "Monthly subscription", "Dinner with friends", "Grocery shopping"]
+                [None, "Monthly subscription", "Dinner with friends", "Grocery shopping", 
+                 "Medication", "Movie tickets", "Transportation fare"]
             ),
-            "date": (datetime.utcnow() - timedelta(days=random.randint(0, 365))).isoformat(),
+            "date": (datetime.utcnow() - timedelta(days=random.randint(0, 90))).isoformat(),
             "payment_method": random.choice(payment_methods),
             "recurring": random.choice([True, False]),
         }
@@ -45,6 +46,7 @@ def write_to_mongodb(data, db_name="expensesDB", collection_name="expenseDetails
         data (list): A list of dictionaries representing the data to insert.
         db_name (str): The name of the MongoDB database.
         collection_name (str): The name of the MongoDB collection.
+        chunk_size (int): The number of documents to insert in each batch.
     """
     try:
         # Connect to MongoDB
