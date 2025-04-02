@@ -1,0 +1,44 @@
+version: "3.9"
+
+services:
+  mongodb:
+    image: mongo:7.0
+    container_name: mongodb
+    ports:
+      - "27017:27017"  # Expose MongoDB on localhost:27017
+    volumes:
+      - mongo_data:/data/db  # Persist MongoDB data
+
+  fastapi:
+    build:
+      context: .  # Build the FastAPI app from the current directory
+      dockerfile: Dockerfile
+    container_name: fastapi
+    ports:
+      - "9000:9000"  # Expose FastAPI on localhost:8000
+    depends_on:
+      - mongodb  # Ensure MongoDB starts before FastAPI
+    environment:
+      MONGO_SERVER: mongodb://host.docker.internal:27017  # MongoDB connection string
+      MONGO_DATABASE_NAME: financeDB
+      MONGO_COLLECTION: expensesDetails
+      API_KEY: MY_SECRET_API_KEY
+    volumes:
+      - .:/app  # Mount the current directory to the container for live code reloading
+    command: uvicorn app.main:app --host 0.0.0.0 --port 9000 --reload
+
+  load_data:
+    image: python:3.9-slim  # Use the official Python 3.9 image
+    container_name: load_data
+    depends_on:
+      - mongodb  # Ensure MongoDB starts before running the script
+    environment:
+      MONGO_URI: mongodb://host.docker.internal:27017  # MongoDB connection string
+    volumes:
+      - .:/app  # Mount the current directory to the container
+    working_dir: /app  # Set the working directory inside the container
+    command: sh -c "pip install pymongo && python data/load_data.py"  # Install pymongo and run the script
+    restart: "no"  # Ensure the container runs only once
+
+volumes:
+  mongo_data:

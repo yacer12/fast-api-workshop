@@ -5,6 +5,7 @@ from datetime import datetime
 from typing import Any
 
 from bson import ObjectId
+from uuid import uuid4
 from pydantic.json_schema import JsonSchemaValue
 from pydantic_core import core_schema
 
@@ -42,22 +43,25 @@ class ObjectIdPydanticAnnotation:
         return handler(core_schema.str_schema())
 
 class ExpenseBase(BaseModel):
-    expense_id: str
-    user_id: str
-    amount: float = Field(..., gt=0)
-    category: str
-    description: Optional[str] = None
-    date: datetime = Field(default_factory=datetime.utcnow)
-    payment_method: str  # e.g., "Credit Card", "Cash", "Bank Transfer"
-    recurring: bool = False  # If true, this is a recurring expense
+    expense_id: str = Field(default_factory=lambda: str(uuid4()), description="Unique identifier for the expense")
+    user_id: str = Field(..., description="The ID of the user associated with the expense")
+    amount: float = Field(..., gt = 0, lt = 2500, description="The amount of the expense")
+    category: str = Field(..., description="The category of the expense")
+    description: Optional[str] = Field(None, description="A description of the expense")
+    created_date: datetime = Field(default_factory=datetime.utcnow, description="The date of the expense")
+    payment_method: str = Field(None, pattern="^(Credit Card|Cash|Mobile Payment|Bank Transfer)",
+                                description="The payment method used for the expense")
+    recurring: bool = Field(default=False, description="Whether the expense is recurring")
+    expense_uri: str = Field(None, description="The url of the expense")
 
-class RecordCreate(ExpenseBase):
+
+class ExpenseCreate(ExpenseBase):
     pass
 
-class RecordUpdate(ExpenseBase):
+class ExpenseUpdate(ExpenseBase):
     reason: str
 
-class RecordOut(ExpenseBase):
+class ExpenseOut(ExpenseBase):
     id: Annotated[ObjectId, ObjectIdPydanticAnnotation] = Field(
         default="",
         alias="_id",
