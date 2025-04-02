@@ -1,13 +1,17 @@
 FROM python:3.9
 
-WORKDIR /code
+# Set the working directory
+WORKDIR /app
 
-COPY ./requirements.txt /code/requirements.txt
+# Copy only the requirements file to leverage Docker caching
+COPY requirements.txt .
 
-RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
+# Install dependencies
+RUN pip install --no-cache-dir -r requirements.txt
 
-# COPY ./app /code/app
-# COPY ./models /code/models
+# Copy the application code
+COPY . .
 
-# Run the application.
-CMD ["uvicorn", "app.main:app", "--proxy-headers", "--host", "0.0.0.0", "--port", "9000", "--reload", "--log-level", "debug"]
+# Expose the port FastAPI will run on
+# EXPOSE 9000
+# CMD ["uvicorn", "app.main:app", "--proxy-headers", "--host", "0.0.0.0", "--port", "9000", "--reload", "--log-level", "debug"]
