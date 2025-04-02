@@ -1,15 +1,10 @@
-from fastapi import FastAPI, HTTPException, Query, Path, APIRouter
-from fastapi.responses import JSONResponse
-from pydantic import BaseModel
-from typing import List, Optional
-import uuid
+"""Expenses API endpoints."""
+from fastapi import HTTPException, Path, APIRouter
 from datetime import datetime
-from fastapi.openapi.utils import get_openapi
 from models.schemas import ExpenseCreate, ExpenseOut, ExpenseUpdate
 from models.errors import ErrorResponse
 from utils.expense_operations import ExpenseModel
 
-# app = FastAPI(swagger_ui_parameters={"syntaxHighlight.theme": "obsidian"})
 _BASE_URI = "http://localhost:9000/expenses"
 router = APIRouter()
 

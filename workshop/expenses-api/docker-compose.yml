@@ -22,6 +22,7 @@ services:
       MONGO_SERVER: mongodb://host.docker.internal:27017  # MongoDB connection string
       MONGO_DATABASE_NAME: financeDB
       MONGO_COLLECTION: expensesDetails
+      MONGO_COLLECTION_USERS: users
       API_KEY: MY_SECRET_API_KEY
     volumes:
       - .:/app  # Mount the current directory to the container for live code reloading

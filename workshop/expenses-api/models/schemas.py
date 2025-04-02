@@ -42,7 +42,14 @@ class ObjectIdPydanticAnnotation:
     def __get_pydantic_json_schema__(cls, _core_schema, handler) -> JsonSchemaValue:
         return handler(core_schema.str_schema())
 
-class ExpenseBase(BaseModel):
+class ResponseModelCreate(BaseModel):
+    status_code: int
+    message: str
+    timestamp: datetime
+    created_record: dict
+
+
+class Expense(BaseModel):
     expense_id: str = Field(default_factory=lambda: str(uuid4()), description="Unique identifier for the expense")
     user_id: str = Field(..., description="The ID of the user associated with the expense")
     amount: float = Field(..., gt = 0, lt = 2500, description="The amount of the expense")
@@ -55,13 +62,28 @@ class ExpenseBase(BaseModel):
     expense_uri: str = Field(None, description="The url of the expense")
 
 
-class ExpenseCreate(ExpenseBase):
+class ExpenseCreate(Expense):
     pass
 
-class ExpenseUpdate(ExpenseBase):
+class ExpenseUpdate(Expense):
     reason: str
 
-class ExpenseOut(ExpenseBase):
+class ExpenseOut(Expense):
+    id: Annotated[ObjectId, ObjectIdPydanticAnnotation] = Field(
+        default="",
+        alias="_id",
+    )
+
+class User(BaseModel):
+    user_id: int
+    user_name: str
+    status: str
+    request_time: datetime
+
+class UserCreate(User):
+    pass
+
+class UserOut(User):
     id: Annotated[ObjectId, ObjectIdPydanticAnnotation] = Field(
         default="",
         alias="_id",
