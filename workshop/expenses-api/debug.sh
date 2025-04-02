@@ -1,3 +1,3 @@
 echo "Starting to build Docker Image"
 
-docker-compose up --build
+docker-compose -f docker-compose.yml up --build
