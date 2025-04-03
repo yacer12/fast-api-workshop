@@ -3,7 +3,7 @@ from typing import List, Optional, Annotated
 from bson.objectid import ObjectId
 from datetime import datetime
 from typing import Any
-
+from enum import Enum
 from bson import ObjectId
 from uuid import uuid4
 from pydantic.json_schema import JsonSchemaValue
@@ -42,6 +42,27 @@ class ObjectIdPydanticAnnotation:
     def __get_pydantic_json_schema__(cls, _core_schema, handler) -> JsonSchemaValue:
         return handler(core_schema.str_schema())
 
+class UserType(str, Enum):
+    admin = "admin"
+    editor = "editor"
+    viewer = "viewer"
+
+class User(BaseModel):
+    user_id: int
+    user_name: str
+    status: str
+    user_type: UserType = Field(..., description="Type of the user (admin, editor, viewer)")
+    request_time: datetime
+
+class UserCreate(User):
+    pass
+
+class UserOut(User):
+    id: Annotated[ObjectId, ObjectIdPydanticAnnotation] = Field(
+        default="",
+        alias="_id",
+    )
+
 class ResponseModelCreate(BaseModel):
     status_code: int
     message: str
@@ -74,17 +95,3 @@ class ExpenseOut(Expense):
         alias="_id",
     )
 
-class User(BaseModel):
-    user_id: int
-    user_name: str
-    status: str
-    request_time: datetime
-
-class UserCreate(User):
-    pass
-
-class UserOut(User):
-    id: Annotated[ObjectId, ObjectIdPydanticAnnotation] = Field(
-        default="",
-        alias="_id",
-    )
