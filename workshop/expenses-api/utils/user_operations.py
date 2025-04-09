@@ -1,4 +1,4 @@
-from http.client import HTTPException
+from fastapi.exceptions import HTTPException
 from app.config import database
 from bson.objectid import ObjectId
 from datetime import datetime
@@ -25,17 +25,16 @@ class UserModel:
 
     @classmethod
     async def update(cls, user_id, update_data):
-        update_data["updatedAt"] = datetime.now()
-        await cls.collection.update_one({"expense_id": user_id}, {"$set": update_data})
+        await cls.collection.update_one({"user_id": user_id}, {"$set": update_data})
 
     @classmethod
-    async def delete(cls, user_id, reason):
-        if not reason:
-            raise HTTPException(status_code=400, detail="Reason is required for deletion")
+    async def delete(cls, user_id, reason, deleted_by) -> bool:
+        if not reason or not deleted_by:
+            raise HTTPException(status_code=400, detail="Missing required fields for deletion")
 
-        user = await cls.collection.find_one({"user_id": user_id})
+        user = await cls.collection.find_one({"user_id": int(user_id)})
         if not user:
-            return None
+            return False
 
-        await cls.collection.delete_one({"_id": user_id})
-        return user
+        await cls.collection.delete_one({"user_id": int(user_id)})
+        return True
