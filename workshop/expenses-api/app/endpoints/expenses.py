@@ -6,7 +6,7 @@ from models.errors import ErrorResponse
 from utils.expense_operations import ExpenseModel
 
 _BASE_URI = "http://localhost:9000/expenses"
-router = APIRouter()
+router = APIRouter(tags=["Expenses"])
 
 
 @router.post("/expenses/", response_model=dict)
