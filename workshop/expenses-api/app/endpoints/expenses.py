@@ -28,7 +28,7 @@ async def create_expense(expense: ExpenseCreate):
 
 @router.get("/expenses/{record_id}", response_model=ExpenseOut, tags=["Expenses"])
 async def get_expense(record_id: str = Path(title="Record ID", 
-                                           description="The record ID to retrieve", example="1")):
+                                           description="The record ID to retrieve", example="aaa-bbb-ccc")):
     """
         Retrieves a record from collection using its ID.
     """

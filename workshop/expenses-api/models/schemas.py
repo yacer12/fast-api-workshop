@@ -47,16 +47,25 @@ class UserType(str, Enum):
     editor = "editor"
     viewer = "viewer"
 
+class UserStatusType(str, Enum):
+    active = "A"
+    inactive = "I"
+    terminated = "T"
+
 class User(BaseModel):
     user_id: int
     user_name: str
-    status: str
+    status: UserStatusType = Field(..., description="Status of the user (A for Active, I for Inactive, T for terminated)")
     user_type: UserType = Field(..., description="Type of the user (admin, editor, viewer)")
-    request_time: datetime
+    request_time: Optional[datetime] = Field(default_factory=datetime.utcnow, description="Time of creation")
 
 class UserCreate(User):
     pass
 
+class UserUpdate(User):
+    reason: str
+    #updated_time: Optional[datetime] = Field(default_factory=datetime.utcnow, description="Time of update")
+    
 class UserOut(User):
     id: Annotated[ObjectId, ObjectIdPydanticAnnotation] = Field(
         default="",
@@ -88,6 +97,11 @@ class ExpenseCreate(Expense):
 
 class ExpenseUpdate(Expense):
     reason: str
+
+class ExpenseDelete(Expense):
+    reason: str
+    deleted_time: Optional[datetime] = Field(default_factory=datetime.utcnow, description="Time of deletion")
+    deleted_by: str = Field(..., description="The ID of the user who deleted the expense")
 
 class ExpenseOut(Expense):
     id: Annotated[ObjectId, ObjectIdPydanticAnnotation] = Field(
